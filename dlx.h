@@ -7,7 +7,7 @@ public:
     Node* _U;
     Node* _D;
     Node* _C;
-    int _size, _id;
+    int _size, _id, _lin;
 
     Node() {
         _L = nullptr;
@@ -15,8 +15,6 @@ public:
         _U = nullptr;
         _D = nullptr;
         _C = nullptr;
-        _size = NULL;
-        _id = NULL;
     }
 
     
