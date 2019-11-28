@@ -242,38 +242,28 @@ void uncover(Node* c){
     c->_L->_R = c;
 }
 
-void printSolution(list<Node*> solution, int n, int** matriz_sudoku) {
-    // printf("Solucao:\n");s
+void Solution(list<Node*> solution, int n, int** matriz_sudoku) {
     for(list<Node*>::iterator it = solution.begin(); it!=solution.end(); it++) {
         int cel = ((*it)->_lin)/n;
         int val = ((*it)->_lin)%n;
-        // printf("cel: %d - num: %d\n", cel, val);
         matriz_sudoku[cel/n][cel%n] = val+1;
     }
-        
-    // printf("\n");
 }
 
-void search(Node* header, list<Node*> solution, int k, int n, int** matriz_sudoku) {
-    
+void search(Node* header, list<Node*> solution, int n, int** matriz_sudoku) {
     if(header->_R == header ) {
-        printSolution(solution,n, matriz_sudoku);
+        Solution(solution, n, matriz_sudoku);
         return;
     }
     Node* c = chose_column(header)->_C;
     // Node* c = header->_R;
-    // printf("pa %d - primeiro: %d\n", k, c->_id);
-    // printf("c: %d \n", c->_id);
     cover(c->_C);
-    // printf("foi1 id:%d size: %d\n",c->_id, c->_size);
     for(Node* r = c->_D; r!=c; r=r->_D){
-        // printf("foi3 %d\n", r->_C->_id);
         solution.push_back(r);
         for(Node* j = r->_R; j!=r; j=j->_R){
             cover(j->_C);
-            // printf("foi");
         }
-        search(header, solution, k++,n, matriz_sudoku);
+        search(header, solution, n, matriz_sudoku);
         for(Node* j = r->_L; j!=r; j=j->_R)
             uncover(j->_C);
        
@@ -283,22 +273,21 @@ void search(Node* header, list<Node*> solution, int k, int n, int** matriz_sudok
 }
 
 
-void test(Node* header, int n) {
-    //header
-    header->_id = -1;
-    header->_C = header;
-    Node* node = header;
-    for(int i = 0; i< 3*(4*n*n+1); i++){
-        printf("%d ", node->_C->_id);
-        node = node->_R;
-    }
+// void test(Node* header, int n) {
+//     //header
+//     header->_id = -1;
+//     header->_C = header;
+//     Node* node = header;
+//     for(int i = 0; i< 3*(4*n*n+1); i++){
+//         printf("%d ", node->_C->_id);
+//         node = node->_R;
+//     }
     
-    node = header->_R->_D;
-    for(int i = 0; i< 3*(4*n*n+1); i++){
-        // printf("%d ", node->);
-    }
-    printf("\n");
-}
+//     node = header->_R->_D;
+//     for(int i = 0; i< 3*(4*n*n+1); i++){
+//     }
+//     printf("\n");
+// }
 
 bool check(int** inicial, int** resultado, int n, int n_lin, int n_col){
     for(int i = 0; i<n; i++){
@@ -344,25 +333,15 @@ bool check(int** inicial, int** resultado, int n, int n_lin, int n_col){
 
     int ri;
     int rj;
-    for(int k = 0; k < n_lin*n_col; k++){
-
-        // for(int r = 0; r<10; r++)
-        //     vet[r]=0;
-        
+    for(int k = 0; k < n_lin*n_col; k++){    
         ri = k/n_lin * n_lin;
         rj = k%n_lin * n_col;
-        // printf("k: %d - ri: %d - rj: %d\n", k, ri, rj);
         for(int i = ri; i < ri+n_lin; i++ ){
             for(int j = rj; j<rj+n_col;j++){             
                 vet[resultado[i][j]] ++;
-                // inicial[i][j]=k;
             }
         }
-        // for(int r = 1; r<n+1; r++)
-        //     if(vet[r]!=1){
-        //         printf("k:%d\n", k);
-        //         return 0;
-        //     }
+      
     }
     return 1;    
 }
@@ -397,26 +376,16 @@ int main(int argc, char const *argv[]){
 
     //Criando e armazenando o matriz que representara o sudoku como um problema de cobertura exata - exact cover
     bool** M = sudokuToExactCover(matriz_sudoku, mlin, mcol, n, n_col, n_lin);
-    
-    // imprime_matriz(M, *mlin, *mcol, n); //TESTE
-
-    // imprime_matriz(matriz_sudoku, n);
 
     Node* header = structure_DLX(matriz_sudoku, n, M, *mlin, *mcol);
     
-    
     list<Node*> solution;
-    int k=0;
-    
-    search(header, solution, k, n, matriz_sudoku);
+    search(header, solution, n, matriz_sudoku);
     
     printf("Original:\n");
     imprime_matriz(matriz_sudoku_teste,n);
     printf("\nSolução:\n");
     imprime_matriz(matriz_sudoku,n);
-    
-    
-
     printf("\n%d\n\n", check(matriz_sudoku_teste, matriz_sudoku, n, n_lin,n_col));
     
     return 0;
